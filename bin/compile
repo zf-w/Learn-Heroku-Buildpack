@@ -1,0 +1,50 @@
+#!/bin/bash
+
+VERSION=stable
+RUST_CARGO_BUILD_FLAGS="--release"
+
+BUILD_DIR=${1:-}
+CACHE_DIR=${2:-}
+ENV_DIR=${3:-}
+BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
+
+CARGO_HOME="$CACHE_DIR/cargo"
+PATH="\$CARGO_HOME/bin:\$PATH"
+
+# Standard paranoia.
+set -eu
+
+# Switch to our cache directory.
+mkdir -p "$CACHE_DIR"
+cd "$CACHE_DIR"
+
+if [ -d "$CARGO_HOME" ]; then
+    echo "-----> Checking for new releases of Rust $VERSION channel"
+    # It's possible that $VERSION has changed, or the `stable` channel has updated.
+    rustup self update
+    rustup update "$VERSION"
+    rustup default "$VERSION"
+else
+    echo "-----> Downloading rustup"
+    curl https://sh.rustup.rs -sSf > rustup.sh
+    chmod u+x rustup.sh
+    echo "-----> Using rustup to install Rust channel $VERSION"
+    ./rustup.sh -y --default-toolchain "$VERSION"
+    rm rustup.sh
+fi
+
+if [ ! -x "$CARGO_HOME/bin/rustc" ]; then
+  echo "failed: Cannot find Rust binaries at $CARGO_HOME"
+  exit 1
+else
+  echo "Found Rust binaries at $CARGO_HOME. Proceeding"
+fi
+
+CARGO_TARGET_DIR="$CACHE_DIR/target"
+
+echo "-----> Building application using Cargo"
+cd "$BUILD_DIR"
+rm -rf target/
+cargo build $RUST_CARGO_BUILD_FLAGS --target-dir $CARGO_TARGET_DIR
+mkdir -p target/release
+find "$CARGO_TARGET_DIR/release" -maxdepth 1 -type f -executable -exec cp -a -t target/release {} \;
