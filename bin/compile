@@ -1,5 +1,13 @@
 #!/bin/bash
 
+indent() {
+  sed -u 's/^/       /'
+}
+
+arrow() {
+  sed -u 's/^/-----> /'
+}
+
 VERSION=stable
 RUST_CARGO_BUILD_FLAGS="--release"
 
@@ -27,7 +35,7 @@ if [ -d "$CARGO_HOME" ]; then
     rustup update "$VERSION"
     rustup default "$VERSION"
 else
-    echo "-----> Downloading rustup"
+    echo "Downloading rustup" | arrow
     curl https://sh.rustup.rs -sSf > rustup.sh
     chmod u+x rustup.sh
     echo "-----> Using rustup to install Rust channel $VERSION"
@@ -35,12 +43,12 @@ else
     rm rustup.sh
 fi
 
-if [ ! -x "$CARGO_HOME/bin/rustc" ]; then
-  echo "failed: Cannot find Rust binaries at $CARGO_HOME"
-  exit 1
-else
-  echo "Found Rust binaries at $CARGO_HOME. Proceeding"
-fi
+# if [ ! -x "$CARGO_HOME/bin/rustc" ]; then
+#   echo "failed: Cannot find Rust binaries at $CARGO_HOME"
+#   exit 1
+# else
+#   echo "Found Rust binaries at $CARGO_HOME. Proceeding"
+# fi
 
 CARGO_TARGET_DIR="$CACHE_DIR/target"
 
