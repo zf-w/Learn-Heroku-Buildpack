@@ -42,7 +42,7 @@ else
     echo "-----> Using rustup to install Rust channel $VERSION"
     ./rustup.sh -y --default-toolchain "$VERSION"
     rm rustup.sh
-    source "$CARGO_HOME/.cargo/env"
+    source "$CARGO_HOME/env"
 fi
 
 # if [ ! -x "$CARGO_HOME/bin/rustc" ]; then
