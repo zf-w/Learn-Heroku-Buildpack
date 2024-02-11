@@ -43,8 +43,10 @@ EOF
 mkdir -p "$CACHE_DIR"
 cd "$CACHE_DIR"
 
+echo "Going to Cache directory $CACHE_DIR" | arrow
+
 if [ -d "$CARGO_HOME" ]; then
-    echo "-----> Checking for new releases of Rust $VERSION channel"
+    echo "Checking for new releases of Rust $VERSION channel" | arrow
     # It's possible that $VERSION has changed, or the `stable` channel has updated.
     rustup self update
     rustup update "$VERSION"
@@ -68,7 +70,7 @@ fi
 
 CARGO_TARGET_DIR="$CACHE_DIR/target"
 
-echo "-----> Building application using Cargo"
+echo "Building application using Cargo" | arrow
 cd "$BUILD_DIR"
 rm -rf target/
 cargo build $RUST_CARGO_BUILD_FLAGS --target-dir $CARGO_TARGET_DIR
