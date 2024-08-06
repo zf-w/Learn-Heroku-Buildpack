@@ -8,7 +8,7 @@ arrow() {
   sed -u 's/^/-----> /'
 }
 
-VERSION=stable
+VERSION="1.79.0"
 RUST_CARGO_BUILD_FLAGS="--release"
 
 BUILD_DIR=${1:-}
@@ -55,7 +55,7 @@ else
     echo "Downloading rustup" | arrow
     curl https://sh.rustup.rs -sSf > rustup.sh
     chmod u+x rustup.sh
-    echo "-----> Using rustup to install Rust channel $VERSION"
+    echo "Using rustup to install Rust channel $VERSION" | arrow
     ./rustup.sh -y --default-toolchain "$VERSION"
     rm rustup.sh
     source "$CARGO_HOME/env"
